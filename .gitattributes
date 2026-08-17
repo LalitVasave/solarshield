@@ -1,0 +1,14 @@
+# Normalize line endings for all text files
+* text=auto eol=lf
+
+# Binary files — never touch line endings
+*.pt    binary
+*.pth   binary
+*.onnx  binary
+*.npy   binary
+*.jpg   binary
+*.jpeg  binary
+*.png   binary
+*.pdf   binary
+*.zip   binary
+*.whl   binary

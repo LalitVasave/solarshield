@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.env
+
+# ML model weights (large binary files)
+*.pt
+*.pth
+*.onnx
+runs/
+checkpoints/
+
+# Uploaded & generated images (can be large)
+images/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+mysql_data/
+
+# Reports (generated at runtime)
+reports/
