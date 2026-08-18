@@ -11,10 +11,15 @@ Usage from API:
 from celery import Celery
 from app.config import settings
 
+broker_url = settings.redis_url
+backend_url = settings.redis_url
+if broker_url.startswith("sqla+"):
+    backend_url = broker_url.replace("sqla+", "db+")
+
 celery_app = Celery(
     "solarshield",
-    broker=settings.redis_url,
-    backend=settings.redis_url,
+    broker=broker_url,
+    backend=backend_url,
     include=["app.tasks.celery_app"]
 )
 

@@ -2,27 +2,26 @@ version: "3.9"
 
 services:
 
-  # ── MySQL database ──────────────────────────────────────────────────────────
-  mysql:
-    image: mysql:8.0
-    container_name: solarshield_mysql
+  #  PostgreSQL database 
+  db:
+    image: postgres:15-alpine
+    container_name: solarshield_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: solarshield
-      MYSQL_USER: solar
-      MYSQL_PASSWORD: solar123
+      POSTGRES_USER: solar
+      POSTGRES_PASSWORD: solar123
+      POSTGRES_DB: solarshield
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "solar", "-psolar123"]
+      test: ["CMD-SHELL", "pg_isready -U solar -d solarshield"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── Redis (Celery broker + result backend) ──────────────────────────────────
+  #  Redis (Celery broker + result backend) 
   redis:
     image: redis:7-alpine
     container_name: solarshield_redis
@@ -35,7 +34,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # ── FastAPI application ─────────────────────────────────────────────────────
+  #  FastAPI application 
   api:
     build: .
     container_name: solarshield_api
@@ -48,34 +47,33 @@ services:
       - image_data:/app/images
     env_file: .env
     environment:
-      DATABASE_URL: mysql+pymysql://solar:solar123@mysql:3306/solarshield
+      DATABASE_URL: postgresql+psycopg2://solar:solar123@db:5432/solarshield
       REDIS_URL: redis://redis:6379/0
     depends_on:
-      mysql:
+      db:
         condition: service_healthy
       redis:
         condition: service_healthy
 
-  # ── Celery worker ───────────────────────────────────────────────────────────
+  #  Celery worker 
   worker:
     build: .
     container_name: solarshield_worker
     restart: unless-stopped
-    # --pool=solo required on Windows; on Linux use --pool=prefork --concurrency=4
     command: celery -A app.tasks.celery_app worker --loglevel=info --pool=solo
     volumes:
       - .:/app
       - image_data:/app/images
     env_file: .env
     environment:
-      DATABASE_URL: mysql+pymysql://solar:solar123@mysql:3306/solarshield
+      DATABASE_URL: postgresql+psycopg2://solar:solar123@db:5432/solarshield
       REDIS_URL: redis://redis:6379/0
     depends_on:
-      mysql:
+      db:
         condition: service_healthy
       redis:
         condition: service_healthy
 
 volumes:
-  mysql_data:
+  pg_data:
   image_data:

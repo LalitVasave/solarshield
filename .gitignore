@@ -32,3 +32,6 @@ mysql_data/
 
 # Reports (generated at runtime)
 reports/
+dataset/
+runs/
+*.db
