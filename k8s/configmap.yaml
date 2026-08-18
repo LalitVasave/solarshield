@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: solarshield-config
+  namespace: solarshield
+data:
+  APP_NAME: "SolarShield"
+  DEBUG: "false"
+  IMAGE_STORAGE_PATH: "/app/images"
+  MAX_IMAGE_SIZE_MB: "10"
+  RATE_LIMIT_INSPECTION: "300/minute"
+  RATE_LIMIT_AUTH: "100/minute"
+  DATABASE_URL: "postgresql+psycopg2://solar:solar123@postgres-service:5432/solarshield"
+  REDIS_URL: "redis://redis-service:6379/0"

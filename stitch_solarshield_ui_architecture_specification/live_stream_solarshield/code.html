@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SolarShield - Live Stream</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed": "#e0e3e5",
+                        "on-tertiary-fixed": "#2d1600",
+                        "secondary-container": "#e0e3e5",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "tertiary-fixed-dim": "#ffb875",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#ac6200",
+                        "primary-fixed": "#cce5ff",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#bfc7d2",
+                        "on-background": "#111c2d",
+                        "surface-variant": "#d8e3fb",
+                        "on-surface": "#111c2d",
+                        "tertiary-fixed": "#ffdcc0",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#3f4850",
+                        "on-secondary-container": "#626567",
+                        "secondary": "#5c5f61",
+                        "on-primary-container": "#fdfcff",
+                        "surface": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "tertiary": "#894d00",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001d31",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f9f9ff",
+                        "surface-dim": "#cfdaf2",
+                        "primary-container": "#007bb9",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed": "#191c1e",
+                        "on-secondary-fixed-variant": "#444749",
+                        "surface-container-high": "#dee8ff",
+                        "inverse-surface": "#263143",
+                        "inverse-primary": "#93ccff",
+                        "on-primary-fixed-variant": "#004b73",
+                        "surface-tint": "#006398",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-tertiary-fixed-variant": "#6b3b00",
+                        "outline": "#707881",
+                        "inverse-on-surface": "#ecf1ff",
+                        "primary": "#006194",
+                        "error": "#ba1a1a",
+                        "surface-container": "#e7eeff",
+                        "primary-fixed-dim": "#93ccff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "8px",
+                        "margin-mobile": "16px",
+                        "lg": "40px",
+                        "base": "4px",
+                        "xl": "64px",
+                        "margin-desktop": "32px",
+                        "sm": "16px",
+                        "gutter": "24px",
+                        "md": "24px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #f9f9ff;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+            box-shadow: 0px 4px 12px rgba(30, 41, 59, 0.05);
+        }
+        .telemetry-overlay {
+            background: linear-gradient(to top, rgba(17, 28, 45, 0.7) 0%, rgba(17, 28, 45, 0) 100%);
+        }
+        .blinking-dot {
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        /* Custom scrollbar for events list */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f0f3ff;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #bfc7d2;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<header class="bg-surface docked full-width top-0 sticky z-50 border-b border-outline-variant">
+<div class="flex justify-between items-center w-full px-margin-desktop h-16 max-w-7xl mx-auto">
+<!-- Brand -->
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-md text-primary tracking-tight">SolarShield</span>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex gap-sm">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 px-3 py-2 rounded-md font-label-md text-label-md" href="#">Map</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 px-3 py-2 rounded-md font-label-md text-label-md" href="#">Inspections</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 px-3 py-2 rounded-md font-label-md text-label-md" href="#">Flight Planner</a>
+<!-- Active State -->
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold hover:text-primary transition-colors duration-200 px-3 py-2 font-label-md text-label-md flex items-center gap-2" href="#">
+<span class="w-2 h-2 rounded-full bg-error blinking-dot"></span>
+                        Live Stream
+                    </a>
+</nav>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-sm">
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200 p-2 cursor-pointer active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200 p-2 cursor-pointer active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<button class="text-primary font-label-md text-label-md font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-70 transition-opacity">System Settings</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 border border-outline-variant cursor-pointer active:opacity-70 transition-opacity">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A small circular user profile avatar showing a professional individual smiling subtly against a light neutral background, well-lit, corporate headshot style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4IJKB7-weAovJxa1laXtjqvPV7j77Zy321qXdEbxQGPwgmdTkDdZY-0PzNhMraxVllFk1OaFVUX4mjf9vEh7eDqzAmy-IHPUSN0coXiYnRLgoPw33ZmaxmN4lH5J4UakUeWzQ6zv06KPyVSm3a6x0iRkju7FL_R-KSBP7eVcTTVtFpsnVAk919n4qF5qcHMZ3YpfdWgbuAPuxX3c6Bpg2V3GPZQFXXOull9uipILuaOi7nTtm_81o"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-md md:py-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Center/Left Column: Video Feeds -->
+<div class="lg:col-span-8 xl:col-span-9 flex flex-col gap-gutter">
+<!-- Header for Stream -->
+<div class="flex justify-between items-end mb-2">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">Sector 4 Aerial Survey</h1>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                        Mojave Solar Array Alpha
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-error-container text-on-error-container ml-2">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5 blinking-dot"></span> Live
+                        </span>
+</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-white text-on-surface border border-outline-variant rounded-md font-label-md text-label-md hover:bg-surface-container-low transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">fullscreen</span>
+                        Expand
+                    </button>
+</div>
+</div>
+<!-- Primary Video Feed Container -->
+<div class="relative w-full aspect-video rounded-xl overflow-hidden bg-inverse-surface shadow-sm border border-outline-variant group">
+<!-- Video Feed Image Placeholder -->
+<div class="absolute inset-0 w-full h-full" data-alt="A crisp, high-definition aerial drone camera view looking down at a vast grid of blue solar panels in a sunny, arid landscape. The lighting is bright daylight, creating sharp shadows. The aesthetic is technical, clean, and highly detailed, representing a live industrial inspection feed." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZubVeTgdIWcETyspJBxVLe5GmTeE3fOLYrpwEoZ0MKOyrd_XWYR2b1V0AH3OBPT-1XwyWm4h9fICoAoMg62ZOuE5zCGrSFAa3eryrtvsHJbQRIqDm8K_M81uHSWgY27v758xrj7SbAoGN2r4W1VSBX_1G_BzW6AJhmkarhGhi-vUDdMeUqLfX-etrgIaVYqBsGmCisWgtGM0qB8ofT1EYTc_vVRXNtIDHhiS-bcoLjcsXiiQwSY0H')"></div>
+<!-- Telemetry Overlay (Bottom) -->
+<div class="absolute bottom-0 left-0 right-0 p-md telemetry-overlay flex justify-between items-end">
+<div class="flex gap-md">
+<!-- Telemetry Pill 1 -->
+<div class="bg-inverse-surface/80 backdrop-blur-md border border-outline-variant/30 px-3 py-2 rounded-lg text-white flex flex-col">
+<span class="font-label-sm text-label-sm text-surface-variant opacity-80 uppercase tracking-wider">Altitude</span>
+<span class="font-headline-sm text-headline-sm font-mono">124.5 m</span>
+</div>
+<!-- Telemetry Pill 2 -->
+<div class="bg-inverse-surface/80 backdrop-blur-md border border-outline-variant/30 px-3 py-2 rounded-lg text-white flex flex-col">
+<span class="font-label-sm text-label-sm text-surface-variant opacity-80 uppercase tracking-wider">Speed</span>
+<span class="font-headline-sm text-headline-sm font-mono">15 km/h</span>
+</div>
+</div>
+<div class="flex gap-md text-white items-center">
+<div class="flex items-center gap-1 font-mono text-sm bg-inverse-surface/80 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]">battery_5_bar</span>
+                            78%
+                        </div>
+<div class="flex items-center gap-1 font-mono text-sm bg-inverse-surface/80 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]">signal_cellular_4_bar</span>
+                            98ms
+                        </div>
+<div class="font-mono text-xs opacity-80 text-right">
+                            LAT 35.0512° N<br/>LON 118.1561° W
+                        </div>
+</div>
+</div>
+<!-- Crosshair/Center Reticle UI -->
+<div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-40">
+<div class="w-16 h-16 border border-white/50 rounded-full flex items-center justify-center">
+<div class="w-1 h-1 bg-error rounded-full"></div>
+</div>
+<div class="absolute w-full h-[1px] bg-white/20 top-1/2 -translate-y-1/2"></div>
+<div class="absolute h-full w-[1px] bg-white/20 left-1/2 -translate-x-1/2"></div>
+</div>
+</div>
+<!-- Secondary Fleet Feeds Gallery -->
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-3 uppercase tracking-wider">Active Fleet (3)</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Feed 1 (Active) -->
+<div class="relative aspect-video rounded-lg overflow-hidden border-2 border-primary shadow-sm cursor-pointer">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="A small aerial view from a drone showing rows of clean solar panels. Sunny daylight, high contrast, technical aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA6gWz4Gq-MPjHGk3TJwsWojmx5xgPqMSOUPDBqJbIo3VECAL0x1U_-XqsaiOsII1zeRYq6l-cNQ9rAvVLUfdGCmfCrieQPl2ZPgm8MlosrRJcR14rPkrTtDTJiUdr61u-jt7cSj3GmPUkmmo8r32NRqa-1ph6ZwzYD7ZBoMMUcYpEBDvPm9XY7LnUj7WlIBSuAM8yLU11X10iBcUPv6BBeV1q-_XZubiru1EW4Y1_U1P9VOy2iFX8n')"></div>
+<div class="absolute top-1 left-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">Drone 1 (Main)</div>
+</div>
+<!-- Feed 2 -->
+<div class="relative aspect-video rounded-lg overflow-hidden border border-outline-variant opacity-70 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="A secondary aerial drone view showing the edge of a solar farm meeting desert terrain. Bright, clear, light-mode aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD9oRpRSD3yPZyAzJzDHNpUDFLs5wwv9rejsa-QvIkaP8vP-FcglNqjTHDoAJa5GUzSjVpXfThulUx8a4O0Us4YBdx2k_RrdfALEEycAFg78Nb7yTLxSVXUCu_JkFSF_JAcW7jV0M3lUz9izu42nq7b70pQve_TU7Otbdbr6qKdj93mc5y8D4xLbiBYcG31btUp2Uda16WLR6J8wT3hpxyIbJbOeg9gS9kGW0B6HNm2jbacGKtJnHfq')"></div>
+<div class="absolute top-1 left-1 bg-inverse-surface/80 text-white text-[10px] px-1.5 py-0.5 rounded backdrop-blur-sm">Drone 2</div>
+<div class="absolute bottom-1 right-1 text-error text-[10px] font-bold bg-white/90 px-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">warning</span> Alert
+                        </div>
+</div>
+<!-- Feed 3 -->
+<div class="relative aspect-video rounded-lg overflow-hidden border border-outline-variant opacity-70 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="A drone view looking along an access road between solar panel blocks. Clean, professional industrial imagery." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVbJsOfCar2I_GZ-uDNp2u1HMoAQp9r4jUcsWsvg-AyQ5xYDz8oXUu4wcfaP4CwENLiT2lQuJ-2TpT-bdezUyCS1Ig0TSKKGcHj9DMpvbmTJdUJb_hkgCO0tjOeKxR_MWUbiJ2Eg91z42lt6eZCB6G-QOTWh_u1qNnG2C6v52FqfjXrfxnxCvyafdmDlrbmqOp9NYmrJFH8kPfScg42BQlITYJuPumd31pgW7V7nQeVp-N86Uy-CaI')"></div>
+<div class="absolute top-1 left-1 bg-inverse-surface/80 text-white text-[10px] px-1.5 py-0.5 rounded backdrop-blur-sm">Drone 3</div>
+</div>
+<!-- Add Feed Action -->
+<button class="relative aspect-video rounded-lg border border-dashed border-outline-variant flex flex-col items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[24px] mb-1">add_circle</span>
+<span class="font-label-sm text-label-sm">Deploy Drone</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Live Events & AI Detections -->
+<div class="lg:col-span-4 xl:col-span-3 flex flex-col h-[600px] lg:h-auto">
+<div class="glass-panel rounded-xl h-full flex flex-col overflow-hidden">
+<!-- Header -->
+<div class="bg-surface-container-low border-b border-outline-variant px-sm py-3 flex justify-between items-center shrink-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                        Live AI Analysis
+                    </h2>
+<span class="bg-primary/10 text-primary font-label-sm text-label-sm px-2 py-0.5 rounded-full">Running</span>
+</div>
+<!-- Events List -->
+<div class="flex-grow overflow-y-auto custom-scrollbar p-sm flex flex-col gap-3">
+<!-- Event Item: High Severity (Anomaly) -->
+<div class="bg-white border border-error/30 rounded-lg p-3 shadow-sm relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-error"></div>
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                                Thermal Anomaly
+                            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Just now</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mb-2">Panel hot-spot detected in Sector 4, Block B. Temp delta exceeds 15°C threshold.</p>
+<div class="flex gap-2">
+<button class="text-xs font-medium text-primary hover:underline">View Frame</button>
+<button class="text-xs font-medium text-on-surface-variant hover:text-on-surface">Log Issue</button>
+</div>
+</div>
+<!-- Event Item: Medium Severity (Warning) -->
+<div class="bg-white border border-tertiary/30 rounded-lg p-3 shadow-sm relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                                Surface Soiling
+                            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mb-2">Dust accumulation detected on panel surfaces. Estimated efficiency drop: 4%.</p>
+<div class="flex gap-2">
+<button class="text-xs font-medium text-primary hover:underline">View Frame</button>
+</div>
+</div>
+<!-- Event Item: Low Severity (Info) -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-lg p-3 shadow-sm relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary/40"></div>
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+                                Sector Clear
+                            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Sector 3 scan complete. No structural anomalies detected. Efficiency nominal.</p>
+</div>
+<!-- Event Item: Low Severity (Info) -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-lg p-3 shadow-sm relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary/40"></div>
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">flight_takeoff</span>
+                                Drone 2 Deployed
+                            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">12m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Drone 2 commenced autonomous pathing for Sector 5 periphery check.</p>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="p-3 border-t border-outline-variant bg-white shrink-0">
+<button class="w-full py-2 bg-white text-primary border border-outline-variant rounded-md font-label-md text-label-md hover:bg-surface-container-low transition-colors font-medium">View Full Log</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-container-low border-t border-outline-variant full-width bottom mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop py-md max-w-7xl mx-auto gap-xs">
+<span class="font-headline-sm text-headline-sm text-secondary">SolarShield</span>
+<nav class="flex gap-4">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm cursor-pointer" href="#">System Status</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm cursor-pointer" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm cursor-pointer" href="#">Contact Support</a>
+</nav>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                © 2024 SolarShield Lumina Core. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

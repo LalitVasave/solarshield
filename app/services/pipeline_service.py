@@ -9,6 +9,7 @@ from app.models.fault_result import FaultResult
 from app.services import rgb_service
 from app.services import thermal_service
 from app.services.fusion_service import fuse
+from app.services.maintenance_service import create_jira_ticket
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +64,11 @@ def run_pipeline(inspection_id: str) -> None:
         inspection.status = "completed"
         db.commit()
         logger.info(f"Pipeline completed | inspection={inspection_id}")
+
+        # Trigger maintenance ticket if critical
+        if fault_result.severity == "CRITICAL":
+            logger.info(f"CRITICAL fault detected. Triggering maintenance webhook for panel {inspection.panel_id}.")
+            create_jira_ticket(inspection.panel_id, fault_result)
 
     except Exception as e:
         logger.exception(f"Pipeline failed | inspection={inspection_id} error={e}")

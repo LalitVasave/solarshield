@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solarshield-worker
+  namespace: solarshield
+spec:
+  replicas: 1 # Start with 1, scale up via HPA
+  selector:
+    matchLabels:
+      app: solarshield-worker
+  template:
+    metadata:
+      labels:
+        app: solarshield-worker
+    spec:
+      containers:
+        - name: worker
+          image: solarshield:latest
+          imagePullPolicy: IfNotPresent
+          command: ["celery", "-A", "app.tasks.celery_app", "worker", "--loglevel=info"]
+          envFrom:
+            - configMapRef:
+                name: solarshield-config
+            - secretRef:
+                name: solarshield-secrets
+          resources:
+            requests:
+              cpu: "500m"     # Reserve half a CPU core
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"    # Max 1 CPU core per worker
+              memory: "1Gi"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: solarshield-worker-hpa
+  namespace: solarshield
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: solarshield-worker
+  minReplicas: 1
+  maxReplicas: 50 # Scale up to 50 workers simultaneously during massive drone flights
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70 # If CPU usage hits 70%, spin up a new pod!

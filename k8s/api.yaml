@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solarshield-api
+  namespace: solarshield
+spec:
+  replicas: 2 # Run 2 instances of FastAPI behind a load balancer for High Availability
+  selector:
+    matchLabels:
+      app: solarshield-api
+  template:
+    metadata:
+      labels:
+        app: solarshield-api
+    spec:
+      containers:
+        - name: api
+          image: solarshield:latest # This assumes the image is pushed to ECR/GCR/DockerHub
+          imagePullPolicy: IfNotPresent
+          command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: solarshield-config
+            - secretRef:
+                name: solarshield-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+  namespace: solarshield
+spec:
+  type: LoadBalancer # Expose FastAPI to the public internet
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: solarshield-api

@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.database import SessionLocal, engine, Base
 from app.models.panel import Panel
+from app.models.farm import Farm
 import app.models  # ensure all models registered
 
 Base.metadata.create_all(bind=engine)
@@ -20,8 +21,15 @@ SPACING  = 0.0001    # ~11m between panels
 db = SessionLocal()
 try:
     if db.query(Panel).filter(Panel.farm_id == FARM_ID).count() > 0:
-        print(f"Farm {FARM_ID} already seeded. Skipping.")
+        print(f"Farm {FARM_ID} panels already seeded. Skipping.")
     else:
+        # Seed the Farm record if it doesn't exist
+        farm = db.query(Farm).filter(Farm.id == FARM_ID).first()
+        if not farm:
+            farm = Farm(id=FARM_ID, name="Alpha Solar Site", location="New Delhi, India")
+            db.add(farm)
+            db.commit()
+
         panels = []
         for row in range(5):
             for col in range(8):

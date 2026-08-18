@@ -234,13 +234,156 @@ function renderDrawer(panelId, history) {
   document.getElementById('drawer-body').innerHTML = html;
 }
 
+// Close panel drawer
 function closeDrawer() {
-  document.getElementById('panel-drawer').classList.remove('open');
+    document.getElementById('panel-drawer').classList.remove('open');
+}
+
+// Download Flight Path KML
+function downloadFlightPath() {
+    const farmId = document.getElementById('farm-select').value;
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+        alert("Please login first to download the flight path.");
+        return;
+    }
+    
+    fetch(`http://localhost:8000/farms/${farmId}/flightpath`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to generate KML flight path");
+        return res.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `${farmId}_flightpath.kml`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    })
+    .catch(err => alert(err.message));
 }
 
 function switchFarm() {
-  currentFarm = document.getElementById('farm-select').value;
+  const newFarm = document.getElementById('farm-select').value;
+  document.getElementById('farm-id').textContent = newFarm;
   loadFarmStatus();
+  loadDigitalTwin();
+}
+
+function showDashboardSection() {
+    document.querySelector('.map-container').style.display = 'block';
+    document.getElementById('inspections-section').style.display = 'block';
+    document.getElementById('twin-section').style.display = 'none';
+    document.getElementById('live-section').style.display = 'none';
+    
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav-dashboard').classList.add('active');
+}
+
+function showLiveSection() {
+    document.querySelector('.map-container').style.display = 'none';
+    document.getElementById('inspections-section').style.display = 'none';
+    document.getElementById('twin-section').style.display = 'none';
+    document.getElementById('live-section').style.display = 'block';
+    
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav-live').classList.add('active');
+}
+
+async function startLiveStream() {
+    const urlInput = document.getElementById('stream-url').value || '0';
+    const placeholder = document.getElementById('stream-placeholder');
+    const video = document.getElementById('live-video');
+    
+    placeholder.textContent = "Connecting to drone feed...";
+    
+    const formData = new FormData();
+    formData.append("rtsp_url", urlInput);
+    
+    try {
+        const res = await fetch(`http://localhost:8000/streams/start`, {
+            method: 'POST',
+            body: formData
+        });
+        if (res.ok) {
+            const data = await res.json();
+            video.src = `http://localhost:8000${data.feed_url}`;
+            video.style.display = 'block';
+            placeholder.style.display = 'none';
+        } else {
+            placeholder.textContent = "Failed to start stream.";
+        }
+    } catch (e) {
+        placeholder.textContent = "Error: " + e.message;
+    }
+}
+
+function showTwinSection() {
+    document.querySelector('.map-container').style.display = 'none';
+    document.getElementById('inspections-section').style.display = 'none';
+    document.getElementById('live-section').style.display = 'none';
+    document.getElementById('twin-section').style.display = 'block';
+    
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav-twin').classList.add('active');
+    
+    loadDigitalTwin();
+}
+
+async function loadDigitalTwin() {
+    const farmId = document.getElementById('farm-select').value;
+    try {
+        const res = await fetch(`http://localhost:8000/farms/${farmId}`);
+        if (res.ok) {
+            const data = await res.json();
+            const viewer = document.getElementById('farm-3d-model');
+            const placeholder = document.getElementById('twin-placeholder');
+            
+            if (data.digital_twin_url) {
+                viewer.src = "http://localhost:8000" + data.digital_twin_url;
+                viewer.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                viewer.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
+        }
+    } catch (err) {
+        console.error("Failed to load digital twin info", err);
+    }
+}
+
+async function upload3DModel() {
+    const farmId = document.getElementById('farm-select').value;
+    const fileInput = document.getElementById('model-upload');
+    const token = localStorage.getItem('token');
+    
+    if (!token) return alert("Please login to upload a model.");
+    if (!fileInput.files.length) return alert("Please select a .glb or .gltf file.");
+    
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    
+    try {
+        const res = await fetch(`http://localhost:8000/farms/${farmId}/3d-model`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+        
+        if (!res.ok) throw new Error(await res.text());
+        alert("Model uploaded successfully!");
+        loadDigitalTwin();
+    } catch (err) {
+        alert("Upload failed: " + err.message);
+    }
 }
 
 // ── Enter key for login ───────────────────────────────────────────────────

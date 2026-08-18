@@ -70,14 +70,16 @@ def _get_model():
         return None
 
 
-def predict(image_path: str) -> YOLOResult:
-    """Run YOLO inference on an RGB image."""
+import numpy as np
+
+def predict(source: str | np.ndarray) -> YOLOResult:
+    """Run YOLO inference on an RGB image (path or numpy array)."""
     model = _get_model()
     if model is None:
         return YOLOResult()
 
     try:
-        results = model.predict(source=image_path, conf=CONF_THRESHOLD, verbose=False)
+        results = model.predict(source=source, conf=CONF_THRESHOLD, verbose=False)
     except Exception as e:
         logger.error(f"YOLO inference failed: {e}")
         return YOLOResult()

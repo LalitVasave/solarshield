@@ -24,6 +24,16 @@ FONT_SCALE = 0.55
 THICKNESS  = 2
 
 
+def annotate_frame(img: np.ndarray, yolo_result: YOLOResult) -> np.ndarray:
+    """Draw bounding boxes or 'HEALTHY' stamp on an in-memory numpy array frame."""
+    if not yolo_result.detections:
+        return _stamp_healthy(img)
+    else:
+        h, w = img.shape[:2]
+        for det in yolo_result.detections:
+            img = _draw_box(img, det, w, h)
+        return img
+
 def annotate(rgb_image_path: str, yolo_result: YOLOResult) -> str | None:
     full_path = Path(settings.image_storage_path) / rgb_image_path
     img       = cv2.imread(str(full_path))
@@ -31,12 +41,7 @@ def annotate(rgb_image_path: str, yolo_result: YOLOResult) -> str | None:
         logger.warning(f"Could not load image for annotation: {full_path}")
         return None
 
-    if not yolo_result.detections:
-        img = _stamp_healthy(img)
-    else:
-        h, w = img.shape[:2]
-        for det in yolo_result.detections:
-            img = _draw_box(img, det, w, h)
+    img = annotate_frame(img, yolo_result)
 
     stem          = Path(rgb_image_path).stem
     annotated_dir = Path(settings.image_storage_path) / "annotated"

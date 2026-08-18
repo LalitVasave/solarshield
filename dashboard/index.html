@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
 <body>
   <!-- Sidebar -->
@@ -22,11 +23,17 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a href="index.html" class="nav-item active" id="nav-farm">
-        <span class="nav-icon">🗺</span> Farm Map
+      <a href="#" class="nav-item active" id="nav-dashboard" onclick="showDashboardSection()">
+        <span class="nav-icon">📊</span> Dashboard
       </a>
       <a href="#" class="nav-item" id="nav-inspections">
         <span class="nav-icon">🔍</span> Inspections
+      </a>
+      <a href="#" class="nav-item" id="nav-live" onclick="showLiveSection()">
+        <span class="nav-icon">🎥</span> Live Stream
+      </a>
+      <a href="#" class="nav-item" id="nav-twin" onclick="showTwinSection()">
+        <span class="nav-icon">🌍</span> Digital Twin
       </a>
     </nav>
 
@@ -80,6 +87,7 @@
         <div class="last-update">Last updated: <span id="last-update">—</span></div>
       </div>
       <div class="topbar-right">
+        <button class="btn-primary" onclick="downloadFlightPath()">📥 Download KML</button>
         <button class="btn-refresh" onclick="loadFarmStatus()">↻ Refresh</button>
         <select class="farm-select" id="farm-select" onchange="switchFarm()">
           <option value="FARM-001">FARM-001</option>
@@ -127,6 +135,34 @@
             <tr><td colspan="7" class="empty-row">Login to view inspections</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- Live Stream section -->
+    <section class="section hidden" id="live-section" style="display: none;">
+      <h2 class="section-title-lg">Live Drone Feed (Phase 7)</h2>
+      <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+        <input type="text" id="stream-url" placeholder="Enter RTSP URL or 0 for webcam..." style="flex: 1; padding: 10px; border-radius: 4px; border: 1px solid #444; background: #222; color: #fff;" />
+        <button class="btn-primary" onclick="startLiveStream()">Start Stream</button>
+      </div>
+      <div class="stream-container" style="background: #111; min-height: 480px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+        <span id="stream-placeholder" style="color: #666;">No stream active</span>
+        <img id="live-video" src="" style="max-width: 100%; max-height: 600px; display: none;" />
+      </div>
+    </section>
+
+    <!-- Digital Twin section -->
+    <section class="section hidden" id="twin-section" style="display: none;">
+      <h2 class="section-title-lg">3D Digital Twin (Phase 9)</h2>
+      <div class="twin-container" style="background: #111; min-height: 600px; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; flex-direction: column;">
+        <model-viewer id="farm-3d-model" src="" alt="A 3D model of the solar farm" auto-rotate camera-controls style="width: 100%; height: 600px; display: none;"></model-viewer>
+        <div id="twin-placeholder" style="color: #666; text-align: center; padding: 20px;">
+          <p>No 3D Model uploaded for this farm.</p>
+          <div style="margin-top: 15px; background: #222; padding: 15px; border-radius: 8px;">
+            <input type="file" id="model-upload" accept=".glb,.gltf" style="color: #fff;" />
+            <button class="btn-primary" onclick="upload3DModel()" style="margin-left: 10px;">Upload .glb</button>
+          </div>
+        </div>
       </div>
     </section>
   </main>

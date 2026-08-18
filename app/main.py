@@ -12,7 +12,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from app.database import engine, Base
-from app.api import panels, inspections, farms, reports
+from app.api import panels, inspections, farms, reports, streams
 from app.api import auth as auth_router
 from app.config import settings
 import app.models  # registers all ORM models before create_all
@@ -64,6 +64,7 @@ app.include_router(panels.router)
 app.include_router(inspections.router)
 app.include_router(farms.router)
 app.include_router(reports.router)
+app.include_router(streams.router)
 
 # ── Phase 6: Dashboard (static files) ───────────────────────────────────────
 dashboard_path = os.path.join(os.path.dirname(__file__), "..", "dashboard")
@@ -71,8 +72,13 @@ if os.path.isdir(dashboard_path):
     app.mount("/dashboard", StaticFiles(directory=dashboard_path, html=True), name="dashboard")
 
 # ── Serve uploaded images ────────────────────────────────────────────────────
-if os.path.isdir(settings.image_storage_path):
-    app.mount("/images", StaticFiles(directory=settings.image_storage_path), name="images")
+os.makedirs(settings.image_storage_path, exist_ok=True)
+app.mount("/images", StaticFiles(directory=settings.image_storage_path), name="images")
+
+# ── Serve 3D Digital Twin Models (Phase 9) ──────────────────────────────────
+models_path = os.path.join(os.path.dirname(__file__), "..", "models")
+os.makedirs(models_path, exist_ok=True)
+app.mount("/models", StaticFiles(directory=models_path), name="models")
 
 
 @app.get("/health", tags=["system"])

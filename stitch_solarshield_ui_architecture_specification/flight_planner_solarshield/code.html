@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flight Planner - SolarShield</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed": "#001d31",
+                      "on-tertiary-fixed": "#2d1600",
+                      "secondary-fixed": "#e0e3e5",
+                      "primary": "#006194",
+                      "on-tertiary-fixed-variant": "#6b3b00",
+                      "surface-container-highest": "#d8e3fb",
+                      "tertiary-fixed": "#ffdcc0",
+                      "on-secondary-container": "#626567",
+                      "outline-variant": "#bfc7d2",
+                      "on-surface": "#111c2d",
+                      "outline": "#707881",
+                      "surface-variant": "#d8e3fb",
+                      "tertiary-fixed-dim": "#ffb875",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#c4c7c9",
+                      "tertiary-container": "#ac6200",
+                      "surface-tint": "#006398",
+                      "secondary-container": "#e0e3e5",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#004b73",
+                      "on-surface-variant": "#3f4850",
+                      "on-secondary-fixed-variant": "#444749",
+                      "surface-bright": "#f9f9ff",
+                      "secondary": "#5c5f61",
+                      "primary-container": "#007bb9",
+                      "primary-fixed": "#cce5ff",
+                      "background": "#f9f9ff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#fdfcff",
+                      "inverse-primary": "#93ccff",
+                      "inverse-surface": "#263143",
+                      "surface": "#f9f9ff",
+                      "inverse-on-surface": "#ecf1ff",
+                      "on-background": "#111c2d",
+                      "on-primary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-container": "#fffbff",
+                      "on-secondary-fixed": "#191c1e",
+                      "surface-container-high": "#dee8ff",
+                      "on-error": "#ffffff",
+                      "tertiary": "#894d00",
+                      "surface-container-low": "#f0f3ff",
+                      "surface-dim": "#cfdaf2",
+                      "error": "#ba1a1a",
+                      "primary-fixed-dim": "#93ccff",
+                      "surface-container": "#e7eeff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "16px",
+                      "md": "24px",
+                      "xl": "64px",
+                      "margin-desktop": "32px",
+                      "base": "4px",
+                      "lg": "40px",
+                      "gutter": "24px",
+                      "margin-mobile": "16px",
+                      "xs": "8px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="bg-surface-container-lowest font-body-md text-body-md border-b border-outline-variant shadow-sm w-full top-0 z-50 sticky">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 max-w-7xl mx-auto">
+<!-- Brand -->
+<div class="flex items-center gap-xs cursor-pointer active:opacity-70">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">solar_power</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">SolarShield</span>
+</div>
+<!-- Navigation Links (Web) -->
+<div class="hidden md:flex items-center h-full gap-md">
+<a class="h-full flex items-center text-secondary hover:text-primary transition-colors cursor-pointer active:opacity-70" href="#">Map</a>
+<a class="h-full flex items-center text-secondary hover:text-primary transition-colors cursor-pointer active:opacity-70" href="#">Inspections</a>
+<a aria-current="page" class="h-full flex items-center text-primary border-b-2 border-primary pb-1 cursor-pointer active:opacity-70" href="#">Flight Planner</a>
+</div>
+<!-- Actions & Profile -->
+<div class="flex items-center gap-sm">
+<div class="flex gap-xs hidden sm:flex">
+<button class="p-xs rounded-full hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-70 text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-xs rounded-full hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-70 text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="relative cursor-pointer active:opacity-70">
+<img alt="User profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A small circular profile picture of a professional drone operator in a bright, modern corporate setting. The lighting is clean and soft white. The operator wears subtle aerospace-themed apparel. The background is slightly blurred to focus on the portrait. The overall mood is confident and reliable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2JOUSdKc1Wf8XsNjEqEKZIXnbBjOLULYujy5fbUNYHWg95tvHUig9GKUclWrJnBCl4T0f0AibO5VgOIkV-NPjtzUbPwOXzwDJLwYumJ3_PKsCtuFtfuzAf_WU8odrIYLnqT1QPHBBSQqLouD91FPEuZ1_ECsBYXGhc5-itjaccGwff2u1PWq83xLtwSJCAnJUDGojkV6mQ2Y1NZMaFkEUBEvmg9WcTomPfJDE1A9s22VVyZwj04ON"/>
+<div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-surface-container-lowest"></div>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden p-xs rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col lg:flex-row w-full max-w-7xl mx-auto overflow-hidden relative" style="height: calc(100vh - 64px);">
+<!-- Map Area (Primary Context) -->
+<div class="flex-1 relative bg-surface-dim overflow-hidden flex flex-col">
+<!-- Simulated Map Background -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="An expansive, high-resolution aerial view of a massive solar farm arranged in precise geometric patterns across a dry, flat landscape. The UI style is light and modern, with soft sunlight casting gentle shadows on the solar panels. The colors are dominated by bright whites, light grays, and the deep blue of the panels, conveying a sense of vast scale and clean energy. Overlays of minimal, translucent interface elements suggest a digital map view." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBTkV3LVtnydtb_p_Y680YSnBx7kw2QevUkq0bKE3llBfHzrDmnqEweQdcMCUrx5mTWUzZDx_rf6Ptz5VNRQaWRF94of34DNqRehz-D_Gr6-uRccEl6_p2_SLnPf0_4ap-A4aV5seVVOeBG_IhSVZnCChewNtLrt-k-isy0cpP22DrJ921ObF52MkjREwVO7WaGZsG2zeBcZYMI-U8VWQcKuiVW1sm8pBCR29rjVC8RcKZihQ4_H2nR')">
+<!-- Map Overlay Gradient for readability -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim/80 via-transparent to-transparent"></div>
+</div>
+<!-- Map Controls / HUD -->
+<div class="relative z-10 p-sm md:p-md flex justify-between items-start pointer-events-none">
+<div class="pointer-events-auto bg-surface-container-lowest/90 backdrop-blur-md rounded-lg shadow-sm border border-outline-variant p-base inline-flex flex-col gap-base">
+<button class="p-xs hover:bg-surface-container-high rounded-md transition-colors text-on-surface-variant" title="Zoom In">
+<span class="material-symbols-outlined">add</span>
+</button>
+<div class="h-[1px] w-full bg-outline-variant/50"></div>
+<button class="p-xs hover:bg-surface-container-high rounded-md transition-colors text-on-surface-variant" title="Zoom Out">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="h-[1px] w-full bg-outline-variant/50"></div>
+<button class="p-xs hover:bg-surface-container-high rounded-md transition-colors text-on-surface-variant" title="Center on Farm">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+<!-- Flight Path Stats Badge -->
+<div class="pointer-events-auto bg-surface-container-lowest/90 backdrop-blur-md rounded-full shadow-sm border border-outline-variant px-sm py-xs flex items-center gap-sm">
+<div class="flex items-center gap-xs text-primary">
+<span class="material-symbols-outlined text-[18px]">route</span>
+<span class="font-label-md text-label-md">Path: 4.2km</span>
+</div>
+<div class="w-[1px] h-4 bg-outline-variant"></div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-label-md text-label-md">12 Waypoints</span>
+</div>
+</div>
+</div>
+<!-- SVG Overlay for Flight Path (Simulated) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg">
+<!-- Path Line -->
+<path class="text-primary opacity-80" d="M 200 300 Q 400 150 600 250 T 800 100" fill="none" stroke="currentColor" stroke-dasharray="6,6" stroke-width="3"></path>
+<!-- Waypoints -->
+<circle class="fill-primary-container stroke-surface-container-lowest" cx="200" cy="300" r="6" stroke-width="2"></circle>
+<circle class="fill-surface-container-lowest stroke-primary" cx="600" cy="250" r="6" stroke-width="2"></circle>
+<circle class="fill-error stroke-surface-container-lowest" cx="800" cy="100" r="8" stroke-width="2"></circle>
+<text class="font-label-sm text-label-sm fill-on-surface drop-shadow-md" x="815" y="105">End Point</text>
+</svg>
+<!-- Bottom floating action (Mobile Primary) -->
+<div class="mt-auto p-margin-mobile relative z-10 lg:hidden w-full flex justify-center">
+<button class="w-full max-w-sm bg-primary text-on-primary font-label-md text-label-md px-md py-sm rounded-lg shadow-sm hover:bg-primary-container transition-colors flex items-center justify-center gap-xs active:opacity-80">
+<span class="material-symbols-outlined text-[18px]">flight_takeoff</span>
+                    Confirm Mission Plan
+                </button>
+</div>
+</div>
+<!-- Right Sidebar (Mission Parameters & Fleet) -->
+<aside class="w-full lg:w-[400px] bg-surface-container-lowest border-l border-outline-variant flex flex-col h-full overflow-y-auto lg:h-[calc(100vh-64px)] z-20 shadow-[-4px_0_12px_rgba(30,41,59,0.02)]">
+<!-- Sidebar Header -->
+<div class="p-md border-b border-outline-variant bg-surface-container-lowest sticky top-0 z-10">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-xs flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">route</span>
+                    Mission Parameters
+                </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Configure autonomous flight details for the selected sector.</p>
+</div>
+<!-- Parameters Content -->
+<div class="p-md flex flex-col gap-lg flex-1">
+<!-- Quick Sliders / Settings -->
+<div class="flex flex-col gap-sm">
+<!-- Altitude -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">height</span>
+                                Target Altitude
+                            </label>
+<span class="font-label-sm text-label-sm text-primary bg-primary-fixed px-2 py-0.5 rounded-full">45m</span>
+</div>
+<input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" max="120" min="10" type="range" value="45"/>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant mt-1">
+<span>10m</span>
+<span>120m (Max)</span>
+</div>
+</div>
+<!-- Speed -->
+<div class="flex flex-col gap-xs mt-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">speed</span>
+                                Cruising Speed
+                            </label>
+<span class="font-label-sm text-label-sm text-primary bg-primary-fixed px-2 py-0.5 rounded-full">12 m/s</span>
+</div>
+<input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" max="25" min="5" type="range" value="12"/>
+</div>
+<!-- Battery Reserve -->
+<div class="flex flex-col gap-xs mt-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">battery_alert</span>
+                                Min. Battery Reserve
+                            </label>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-fixed px-2 py-0.5 rounded-full">20%</span>
+</div>
+<div class="grid grid-cols-3 gap-xs mt-1">
+<button class="py-1.5 px-2 border border-outline-variant rounded-md font-label-sm text-label-sm text-on-surface hover:bg-surface-container-high transition-colors text-center">10%</button>
+<button class="py-1.5 px-2 border-2 border-primary bg-primary-fixed/20 rounded-md font-label-sm text-label-sm text-primary transition-colors text-center font-bold">20%</button>
+<button class="py-1.5 px-2 border border-outline-variant rounded-md font-label-sm text-label-sm text-on-surface hover:bg-surface-container-high transition-colors text-center">30%</button>
+</div>
+</div>
+</div>
+<!-- Estimated Duration Card -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-sm flex items-start gap-sm">
+<div class="p-xs bg-surface-container-highest rounded-full text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div class="flex-1">
+<h4 class="font-label-md text-label-md text-on-surface">Estimated Duration</h4>
+<div class="flex items-baseline gap-xs mt-1">
+<span class="font-headline-md text-headline-md text-on-surface">24</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">minutes</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5 mt-2">
+<div class="bg-primary h-1.5 rounded-full" style="width: 45%"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1 text-right">Uses ~45% battery</p>
+</div>
+</div>
+<hr class="border-outline-variant/50 border-t"/>
+<!-- Active Drones Fleet -->
+<div class="flex flex-col gap-sm">
+<div class="flex justify-between items-end">
+<h3 class="font-headline-sm text-[16px] font-semibold text-on-surface">Available Fleet</h3>
+<span class="font-label-sm text-label-sm text-primary cursor-pointer hover:underline">Manage</span>
+</div>
+<!-- Drone Item 1 (Selected) -->
+<div class="border-2 border-primary bg-primary-fixed/10 rounded-lg p-sm cursor-pointer relative overflow-hidden group">
+<div class="absolute right-0 top-0 h-full w-1 bg-primary"></div>
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 bg-surface-container-highest rounded-md flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface">Scout Alpha-1</h4>
+<div class="flex items-center gap-1 mt-0.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                        Ready
+                                    </div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="font-label-md text-label-md text-on-surface flex items-center gap-0.5">
+                                    98% <span class="material-symbols-outlined text-[16px] text-green-600">battery_full</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Drone Item 2 (In Use) -->
+<div class="border border-outline-variant bg-surface-container-lowest rounded-lg p-sm opacity-60 cursor-not-allowed">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 bg-surface-container-low rounded-md flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">flight</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface">Scout Beta-2</h4>
+<div class="flex items-center gap-1 mt-0.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                        In Flight (Sector 4)
+                                    </div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="font-label-md text-label-md text-on-surface flex items-center gap-0.5">
+                                    42% <span class="material-symbols-outlined text-[16px]">battery_5_bar</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Footer Actions (Desktop Primary) -->
+<div class="p-md border-t border-outline-variant bg-surface-container-lowest sticky bottom-0 z-10 hidden lg:block">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md px-md py-sm rounded-lg shadow-sm hover:bg-primary-container transition-colors flex items-center justify-center gap-xs active:opacity-80">
+<span class="material-symbols-outlined text-[20px]">flight_takeoff</span>
+                    Confirm Mission Plan
+                </button>
+</div>
+</aside>
+</main>
+</body></html>

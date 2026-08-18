@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     rate_limit_inspection: str = "30/minute"
     rate_limit_auth: str = "10/minute"
 
+    # Maintenance Integrations (Jira)
+    jira_url: str | None = None
+    jira_email: str | None = None
+    jira_api_token: str | None = None
+    jira_project_key: str | None = None
+
     class Config:
         env_file = ".env"
 

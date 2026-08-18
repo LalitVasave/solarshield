@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Interactive Global Map - SolarShield</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#707881",
+                    "on-primary-fixed-variant": "#004b73",
+                    "secondary-fixed-dim": "#c4c7c9",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#007bb9",
+                    "on-surface-variant": "#3f4850",
+                    "surface-container-highest": "#d8e3fb",
+                    "on-background": "#111c2d",
+                    "on-secondary-fixed": "#191c1e",
+                    "secondary-fixed": "#e0e3e5",
+                    "inverse-surface": "#263143",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "primary-fixed": "#cce5ff",
+                    "tertiary-fixed-dim": "#ffb875",
+                    "tertiary-fixed": "#ffdcc0",
+                    "on-tertiary-fixed": "#2d1600",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#444749",
+                    "secondary": "#5c5f61",
+                    "on-surface": "#111c2d",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-variant": "#d8e3fb",
+                    "surface": "#f9f9ff",
+                    "secondary-container": "#e0e3e5",
+                    "surface-container": "#e7eeff",
+                    "surface-container-high": "#dee8ff",
+                    "on-primary-fixed": "#001d31",
+                    "on-tertiary-fixed-variant": "#6b3b00",
+                    "surface-bright": "#f9f9ff",
+                    "tertiary-container": "#ac6200",
+                    "surface-container-low": "#f0f3ff",
+                    "surface-tint": "#006398",
+                    "inverse-primary": "#93ccff",
+                    "primary-fixed-dim": "#93ccff",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#bfc7d2",
+                    "tertiary": "#894d00",
+                    "surface-dim": "#cfdaf2",
+                    "on-primary-container": "#fdfcff",
+                    "primary": "#006194",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#626567",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f9f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "md": "24px",
+                    "margin-mobile": "16px",
+                    "sm": "16px",
+                    "xl": "64px",
+                    "margin-desktop": "32px",
+                    "xs": "8px",
+                    "lg": "40px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .pulse-marker {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 185, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(0, 123, 185, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 185, 0); }
+        }
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen w-full flex flex-col overflow-hidden font-body-md text-body-md">
+<!-- TopNavBar Component -->
+<nav class="bg-surface dark:bg-on-background w-full h-16 border-b border-outline-variant dark:border-outline flex justify-between items-center px-margin-desktop mx-auto max-w-7xl z-50 relative shrink-0">
+<div class="flex items-center gap-lg h-full">
+<span class="text-headline-sm font-headline-sm font-bold text-primary dark:text-inverse-primary cursor-pointer">SolarShield</span>
+<div class="hidden md:flex gap-sm h-full items-end">
+<a class="text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1 font-bold font-label-md text-label-md h-full flex items-center mt-1" href="#">Map</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors font-label-md text-label-md h-full flex items-center hover:bg-surface-container-low dark:hover:bg-surface-dim transition-all px-xs rounded-t-sm" href="#">Inspections</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors font-label-md text-label-md h-full flex items-center hover:bg-surface-container-low dark:hover:bg-surface-dim transition-all px-xs rounded-t-sm" href="#">Flight Planner</a>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-all cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-all cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Area with SideNav -->
+<div class="flex flex-1 overflow-hidden relative">
+<!-- SideNavBar Component -->
+<aside class="bg-surface-container-lowest dark:bg-on-background h-full w-64 border-r border-outline-variant dark:border-outline fixed left-0 top-16 h-[calc(100vh-64px)] z-40 hidden md:flex flex-col py-md px-sm shrink-0 shadow-sm">
+<div class="mb-lg px-sm">
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary">Operations Center</h2>
+<p class="font-label-md text-label-md text-secondary mt-xs">Site: Phoenix North</p>
+</div>
+<nav class="flex-1 flex flex-col gap-xs overflow-y-auto hide-scroll">
+<a class="text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer flex items-center gap-xs p-sm font-label-md text-label-md hover:bg-secondary-container dark:hover:bg-secondary transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+<a class="bg-primary-container text-on-primary-container font-bold rounded-lg cursor-pointer flex items-center gap-xs p-sm font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">solar_power</span>
+                    Assets
+                </a>
+<a class="text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer flex items-center gap-xs p-sm font-label-md text-label-md hover:bg-secondary-container dark:hover:bg-secondary transition-all" href="#">
+<span class="material-symbols-outlined">flight_takeoff</span>
+                    Drones
+                </a>
+<a class="text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer flex items-center gap-xs p-sm font-label-md text-label-md hover:bg-secondary-container dark:hover:bg-secondary transition-all" href="#">
+<span class="material-symbols-outlined">assessment</span>
+                    Reports
+                </a>
+<a class="text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer flex items-center gap-xs p-sm font-label-md text-label-md hover:bg-secondary-container dark:hover:bg-secondary transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+</nav>
+<div class="mt-auto flex flex-col gap-sm pt-md border-t border-outline-variant">
+<button class="bg-primary text-on-primary font-label-md text-label-md py-sm px-md rounded-lg hover:opacity-90 transition-opacity w-full font-bold flex justify-center items-center gap-xs shadow-[0px_4px_12px_rgba(30,41,59,0.15)]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+                    Launch Mission
+                </button>
+<div class="flex gap-xs">
+<a class="flex-1 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-xs p-sm font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+                        Support
+                    </a>
+<a class="flex-1 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-xs p-sm font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        Logs
+                    </a>
+</div>
+</div>
+</aside>
+<!-- Main Map Viewport -->
+<main class="flex-1 relative md:ml-64 bg-surface-container-low overflow-hidden">
+<!-- Map Background Placeholder (Simulating 3D Canvas) -->
+<div class="absolute inset-0 w-full h-full bg-surface-dim overflow-hidden" data-alt="A highly detailed, expansive top-down view of a modern solar farm situated in a vast, arid desert landscape. The image should feature a light, optimistic modern corporate aesthetic. The solar panels are arranged in neat, precise geometric rows, reflecting a soft, clear blue sky. The lighting is bright and even, casting minimal shadows to maintain a clean, high-utility technical appearance. Subtle topographical lines and elevation details are visible in the surrounding pale sand, adhering to a minimalist, airy design language. Accents of 'Intelligence Blue' can be seen on small technical structures scattered throughout the facility." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD57KWUZ-D4pj_MN5iCqvjUrsKxb-9Ky9Ujx7mYL7YnBMMM_UKiivbJgyLMqru-8etUl6uhK21fbMgLt5X8Zn18qLOymHXwaKxxZG_4FdbVpKI2cKYVm0Z0ht6mBczYOrHkNAD-bFiFxsm1GjoDBcI_unsL1fAp-o8J37_iKXPQm33OXPfSaz7u2KwaXozPeuJqJmTumQmADHNfF560d1_Es7kstrksIIpEhiOAM8tmKbloC1RBGMHv')">
+<!-- Overlay pattern for 'terrain' feel -->
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#006194 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Simulated 3D Elements -->
+<div class="absolute top-[40%] left-[30%] w-64 h-32 border border-primary/30 bg-primary/5 transform -skew-x-12 rounded-sm shadow-[0px_4px_12px_rgba(30,41,59,0.05)] pulse-marker flex items-center justify-center backdrop-blur-sm">
+<span class="font-label-md text-label-md text-primary font-bold">Sector 4</span>
+</div>
+</div>
+<!-- Floating Data Cards (Top Left) -->
+<div class="absolute top-md left-md flex gap-sm z-20 pointer-events-none">
+<!-- Real-time Yield -->
+<div class="glass-panel rounded-lg p-sm min-w-[160px] pointer-events-auto">
+<div class="flex items-center gap-xs text-secondary mb-xs">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Real-time Yield</span>
+</div>
+<div class="flex items-end gap-base">
+<span class="font-headline-lg text-headline-lg text-primary">18.2</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-1">MWh</span>
+</div>
+<div class="mt-xs text-secondary font-label-sm text-label-sm flex items-center gap-base">
+<span class="material-symbols-outlined text-[14px] text-primary">trending_up</span>
+                        +2.4% vs avg
+                    </div>
+</div>
+<!-- Active Drones -->
+<div class="glass-panel rounded-lg p-sm min-w-[140px] pointer-events-auto">
+<div class="flex items-center gap-xs text-secondary mb-xs">
+<span class="material-symbols-outlined text-[18px]">flight</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Active Drones</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="font-headline-lg text-headline-lg text-on-surface">3</span>
+<div class="flex gap-base">
+<span class="w-2 h-2 rounded-full bg-primary pulse-marker"></span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+</div>
+</div>
+<div class="mt-xs text-secondary font-label-sm text-label-sm">
+                        In flight
+                    </div>
+</div>
+<!-- Weather -->
+<div class="glass-panel rounded-lg p-sm min-w-[140px] pointer-events-auto">
+<div class="flex items-center gap-xs text-secondary mb-xs">
+<span class="material-symbols-outlined text-[18px]">wb_sunny</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Weather</span>
+</div>
+<div class="flex items-end gap-base">
+<span class="font-headline-lg text-headline-lg text-on-surface">72°</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-1">F</span>
+</div>
+<div class="mt-xs text-secondary font-label-sm text-label-sm">
+                        Clear conditions
+                    </div>
+</div>
+</div>
+<!-- Map Controls (Bottom Left) -->
+<div class="absolute bottom-md left-md flex gap-sm z-20">
+<div class="glass-panel rounded-lg flex overflow-hidden border border-outline-variant">
+<button class="px-sm py-xs bg-primary-container text-on-primary-container font-label-md text-label-md font-medium border-r border-outline-variant hover:bg-surface-container-high transition-colors">3D</button>
+<button class="px-sm py-xs bg-surface text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors">2D</button>
+</div>
+<div class="glass-panel rounded-lg flex gap-xs p-xs border border-outline-variant">
+<button class="p-1 hover:bg-surface-container-high rounded text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<div class="w-[1px] h-full bg-outline-variant mx-1"></div>
+<button class="p-1 hover:bg-surface-container-high rounded text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+</div>
+<!-- Right Side Panel: Sector Analysis -->
+<div class="absolute top-0 right-0 h-full w-80 bg-surface border-l border-outline-variant shadow-[-8px_0_24px_rgba(30,41,59,0.05)] z-30 flex flex-col transform transition-transform duration-300">
+<!-- Panel Header -->
+<div class="p-md border-b border-outline-variant bg-surface-container-lowest">
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block px-xs py-base bg-primary-container text-on-primary-container font-label-sm text-label-sm rounded mb-sm">Active Focus</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Sector 4</h3>
+<p class="font-body-sm text-body-sm text-secondary mt-1">North Field Array</p>
+</div>
+<button class="text-secondary hover:bg-surface-container-low p-1 rounded transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<!-- Panel Content (Scrollable) -->
+<div class="flex-1 overflow-y-auto p-md flex flex-col gap-md hide-scroll">
+<!-- Health Score Card -->
+<div class="bg-surface-container-low rounded-lg p-sm border border-outline-variant">
+<div class="flex justify-between items-center mb-sm">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Overall Health</span>
+<span class="material-symbols-outlined text-primary">health_and_safety</span>
+</div>
+<div class="flex items-end gap-sm mb-sm">
+<span class="font-headline-lg text-headline-lg text-primary">94%</span>
+<span class="font-body-sm text-body-sm text-secondary mb-1">Optimal</span>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 94%"></div>
+</div>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-2 gap-sm">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-sm">
+<span class="font-label-sm text-label-sm text-secondary block mb-1">Efficiency</span>
+<span class="font-headline-sm text-headline-sm text-on-surface block">98.2%</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-sm">
+<span class="font-label-sm text-label-sm text-secondary block mb-1">Temp (Avg)</span>
+<span class="font-headline-sm text-headline-sm text-on-surface block">112°F</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-sm">
+<span class="font-label-sm text-label-sm text-secondary block mb-1">Panels</span>
+<span class="font-headline-sm text-headline-sm text-on-surface block">4,200</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-sm">
+<span class="font-label-sm text-label-sm text-secondary block mb-1">Anomalies</span>
+<span class="font-headline-sm text-headline-sm text-error block">2</span>
+</div>
+</div>
+<!-- Recent Anomalies List -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-sm">Detected Anomalies</h4>
+<div class="flex flex-col gap-xs">
+<div class="bg-surface-container-lowest border border-error-container rounded-lg p-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-error mt-1" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div>
+<span class="font-label-md text-label-md text-on-surface block">Hotspot Detected</span>
+<span class="font-body-sm text-body-sm text-secondary block">Row 42, Panel B7</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-tertiary mt-1" style="font-variation-settings: 'FILL' 1;">info</span>
+<div>
+<span class="font-label-md text-label-md text-on-surface block">Soiling Accumulation</span>
+<span class="font-body-sm text-body-sm text-secondary block">Row 18-20</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel Footer Action -->
+<div class="p-md border-t border-outline-variant bg-surface">
+<button class="w-full bg-surface-container border border-outline-variant text-on-surface font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-high transition-colors flex justify-center items-center gap-xs">
+<span class="material-symbols-outlined">visibility</span>
+                        View Detailed Report
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>
